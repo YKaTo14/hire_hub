@@ -186,16 +186,16 @@ export default function Home() {
             Өөрийн мэргэжлийн чиглэлээр хамгийн тохиромжтой ажлыг олоорой. Бидэнд бүх томоохон салбарт боломжууд бий.
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
           {categories.map((cat) => (
             <div 
               key={cat.name}
-              className="group p-6 bg-white/3 border border-white/6 rounded-2xl hover:shadow-2xl hover:scale-105 transform transition-all cursor-pointer text-center"
+              className="group cursor-pointer rounded-xl border border-white/6 bg-white/3 p-3 text-center transition-all hover:scale-105 hover:shadow-2xl sm:p-5"
             >
-              <div className="bg-gradient-to-br from-violet-500 to-indigo-500 w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4 text-white shadow-lg">
-                <cat.icon className="w-6 h-6" />
+              <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-indigo-500 text-white shadow-lg sm:mb-4 sm:h-14 sm:w-14 sm:rounded-xl">
+                <cat.icon className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
-              <h3 className="font-semibold text-lg mb-1 text-white">{cat.name}</h3>
+              <h3 className="mb-1 text-sm font-semibold leading-tight text-white sm:text-base">{cat.name}</h3>
               <p className="text-sm text-white/75">{cat.jobs} ажлын байр</p>
             </div>
           ))}
