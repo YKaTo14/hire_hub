@@ -1,0 +1,48 @@
+{
+  "name": "hirehub",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start -p 3001",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@auth/prisma-adapter": "^2.11.2",
+    "@google/generative-ai": "^0.24.1",
+    "@next-auth/prisma-adapter": "^1.0.7",
+    "@prisma/client": "^6.19.3",
+    "@uploadthing/react": "^7.3.3",
+    "bcrypt": "^6.0.0",
+    "clsx": "^2.1.1",
+    "groq-sdk": "^1.1.2",
+    "jsonwebtoken": "^9.0.3",
+    "lucide-react": "^1.14.0",
+    "mysql2": "^3.22.1",
+    "next": "16.2.4",
+    "next-auth": "^4.24.14",
+    "pptxgenjs": "^4.0.1",
+    "prisma": "^6.19.3",
+    "puppeteer": "^24.43.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "swagger-ui-react": "^5.32.4",
+    "tailwind-merge": "^3.5.0",
+    "uploadthing": "^7.7.4",
+    "zod": "^4.3.6",
+    "zod-form-data": "^3.0.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/bcrypt": "^6.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.4",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

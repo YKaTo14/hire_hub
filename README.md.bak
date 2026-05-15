@@ -1,0 +1,493 @@
+# HireHub - Full-Stack Job Portal
+
+A production-ready full-stack job portal built with Next.js, TypeScript, Prisma, and MySQL. This project demonstrates modern web development practices including authentication, role-based access control, AI agent integration, and Docker deployment.
+
+## 🚀 Features
+
+### Core Features
+- **User Authentication**: Secure login/register with JWT tokens
+- **Role-Based Access Control**: Admin, Moderator, and User roles
+- **Job Management**: Full CRUD operations for job postings
+- **Application System**: Apply to jobs and track application status
+- **Search & Filter**: Advanced job search with filters
+- **Pagination**: Efficient data loading across all endpoints
+- **AI Agent Integration**: Smart job recommendations and auto-apply functionality
+
+### Security Features
+- **Password Hashing**: bcrypt for secure password storage
+- **JWT Authentication**: Token-based authentication with 7-day expiry
+- **Input Validation**: Zod schema validation on all endpoints
+- **Rate Limiting**: Protects against brute force attacks
+- **Security Headers**: XSS, CSRF, and clickjacking protection
+- **SQL Injection Prevention**: Parameterized queries via Prisma
+
+### Architecture
+- **Frontend**: Next.js 16 with React 19 and TypeScript
+- **Backend**: Next.js API Routes with RESTful design
+- **Database**: MySQL 8 with Prisma ORM
+- **Styling**: Tailwind CSS 4
+- **Deployment**: Docker with docker-compose
+
+## 📋 Requirements
+
+- Node.js 18+
+- MySQL 8+
+- npm or yarn
+
+## 🛠️ Installation
+
+### 1. Clone the repository
+```bash
+git clone <repository-url>
+cd hirehub
+```
+
+### 2. Install dependencies
+```bash
+npm install
+```
+
+### 3. Set up environment variables
+Create a `.env` file in the root directory:
+
+```env
+DATABASE_URL="mysql://root:password@localhost:3306/hirehub"
+JWT_SECRET="your-secret-key-here"
+```
+
+### 4. Set up the database
+```bash
+# Run Prisma migrations
+npx prisma migrate dev --name init
+
+# Generate Prisma client
+npx prisma generate
+```
+
+### 5. Run the development server
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 🐳 Docker Deployment
+
+### Using Docker Compose
+
+1. Build and start the 3-service stack (`frontend`, `backend`, `db`):
+```bash
+docker-compose up -d
+```
+
+2. Services:
+- Frontend: `http://localhost:3000`
+- Backend API: `http://localhost:3001`
+- OpenAPI JSON: `http://localhost:3001/api/openapi`
+
+3. To stop the containers:
+```bash
+docker-compose down
+```
+
+### Manual Docker Build
+
+1. Build the image:
+```bash
+docker build -t hirehub .
+```
+
+2. Run the container:
+```bash
+docker run -p 3001:3001 --env-file .env hirehub
+```
+
+## 📚 API Documentation
+
+### Authentication
+
+#### Register
+```http
+POST /api/auth/register
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123",
+  "name": "John Doe"
+}
+```
+
+#### Login
+```http
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+```
+
+### Jobs
+
+#### List Jobs
+```http
+GET /api/jobs?page=1&limit=10&search=developer&type=FULL_TIME
+Authorization: Bearer <token>
+```
+
+#### Create Job
+```http
+POST /api/jobs
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "title": "Senior Developer",
+  "description": "Job description...",
+  "salary": 100000,
+  "location": "Remote",
+  "type": "FULL_TIME"
+}
+```
+
+#### Get Job
+```http
+GET /api/jobs/:id
+Authorization: Bearer <token>
+```
+
+#### Update Job
+```http
+PUT /api/jobs/:id
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "title": "Updated Title",
+  "status": "CLOSED"
+}
+```
+
+#### Delete Job
+```http
+DELETE /api/jobs/:id
+Authorization: Bearer <token>
+```
+
+### Applications
+
+#### List Applications
+```http
+GET /api/applications?page=1&limit=10&status=PENDING
+Authorization: Bearer <token>
+```
+
+#### Create Application
+```http
+POST /api/applications
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "jobId": 1,
+  "coverLetter": "I am interested in this position..."
+}
+```
+
+#### Update Application Status
+```http
+PUT /api/applications/:id
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "status": "ACCEPTED"
+}
+```
+
+#### Delete Application
+```http
+DELETE /api/applications/:id
+Authorization: Bearer <token>
+```
+
+### Users (Admin Only)
+
+#### List Users
+```http
+GET /api/users?page=1&limit=10&role=USER
+Authorization: Bearer <token>
+```
+
+#### Update User Role
+```http
+PUT /api/users/:id
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "role": "ADMIN"
+}
+```
+
+#### Delete User
+```http
+DELETE /api/users/:id
+Authorization: Bearer <token>
+```
+
+### AI Agent
+
+#### Get Job Recommendations
+```http
+POST /api/agent/recommend
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "skills": "javascript, react, typescript",
+  "preferences": "remote, full-time",
+  "salaryMin": 80000
+}
+```
+
+#### Auto-Apply to Jobs
+```http
+POST /api/agent/auto-apply
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "criteria": {
+    "keywords": "developer, engineer",
+    "minSalary": 80000,
+    "jobTypes": ["FULL_TIME", "REMOTE"]
+  },
+  "limit": 3
+}
+```
+
+## 🗄️ Database Schema
+
+### Tables
+
+#### Users
+- `id` (Primary Key)
+- `email` (Unique)
+- `password` (Hashed)
+- `name` (Optional)
+- `role` (USER, ADMIN, MODERATOR)
+- `createdAt`, `updatedAt`
+
+#### Jobs
+- `id` (Primary Key)
+- `title`
+- `description` (Text)
+- `salary`
+- `location` (Optional)
+- `type` (FULL_TIME, PART_TIME, CONTRACT, INTERNSHIP, REMOTE)
+- `status` (ACTIVE, CLOSED, DRAFT)
+- `employerId` (Foreign Key → Users)
+- `createdAt`, `updatedAt`
+
+#### Applications
+- `id` (Primary Key)
+- `status` (PENDING, ACCEPTED, REJECTED, UNDER_REVIEW)
+- `coverLetter` (Text, Optional)
+- `userId` (Foreign Key → Users)
+- `jobId` (Foreign Key → Jobs)
+- `createdAt`, `updatedAt`
+
+### Relationships
+- Users → Jobs (One-to-Many)
+- Users → Applications (One-to-Many)
+- Jobs → Applications (One-to-Many)
+
+## 🔐 Security Features
+
+### Authentication & Authorization
+- JWT-based authentication with 7-day token expiry
+- Role-based access control (RBAC)
+- Protected routes on both frontend and backend
+
+### Input Validation
+- Zod schema validation on all API endpoints
+- Email format validation
+- Password strength requirements (min 6 characters)
+
+### Rate Limiting
+- Auth endpoints: 5 requests per 15 minutes per IP
+- General endpoints: 100 requests per 15 minutes per IP
+- Rate limit headers included in responses
+
+### Security Headers
+- X-Frame-Options: DENY
+- X-Content-Type-Options: nosniff
+- X-XSS-Protection: 1; mode=block
+- Content-Security-Policy
+- Strict-Transport-Security (production)
+
+### Data Protection
+- Passwords hashed with bcrypt (salt rounds: 10)
+- SQL injection prevention via Prisma ORM
+- XSS protection through input sanitization
+
+## 🤖 AI Agent Integration
+
+The AI Agent provides two main features:
+
+### 1. Job Recommendations
+Analyzes user's application history and preferences to recommend relevant jobs. Uses:
+- Keyword matching in job titles and descriptions
+- Salary preferences
+- Job type preferences
+- Application history analysis
+- Competition scoring (fewer applications = higher score)
+
+### 2. Auto-Apply
+Automatically applies to jobs matching user criteria:
+- Keyword-based job search
+- Salary range filtering
+- Job type filtering
+- Location filtering
+- Configurable limit on applications per run
+
+## 📁 Project Structure
+
+```
+hirehub/
+├── app/
+│   ├── api/
+│   │   ├── auth/
+│   │   │   ├── login/route.ts
+│   │   │   └── register/route.ts
+│   │   ├── jobs/
+│   │   │   ├── route.ts
+│   │   │   └── [id]/route.ts
+│   │   ├── applications/
+│   │   │   ├── route.ts
+│   │   │   └── [id]/route.ts
+│   │   ├── users/
+│   │   │   ├── route.ts
+│   │   │   └── [id]/route.ts
+│   │   ├── agent/
+│   │   │   ├── recommend/route.ts
+│   │   │   └── auto-apply/route.ts
+│   │   └── health/route.ts
+│   ├── dashboard/page.tsx
+│   ├── admin/page.tsx
+│   ├── layout.tsx
+│   └── page.tsx
+├── lib/
+│   ├── auth.ts
+│   ├── rate-limit.ts
+│   └── security.ts
+├── prisma/
+│   ├── schema.prisma
+│   └── migrations/
+├── public/
+├── Dockerfile
+├── docker-compose.yml
+├── next.config.ts
+├── package.json
+├── tsconfig.json
+└── README.md
+```
+
+## 🎨 Tech Stack
+
+### Frontend
+- **Framework**: Next.js 16 (App Router)
+- **UI Library**: React 19
+- **Language**: TypeScript 5
+- **Styling**: Tailwind CSS 4
+- **State Management**: React hooks (useState, useEffect)
+
+### Backend
+- **Runtime**: Node.js 18
+- **API**: Next.js API Routes
+- **ORM**: Prisma 7
+- **Database**: MySQL 8
+
+### Security & Validation
+- **Authentication**: JWT (jsonwebtoken)
+- **Password Hashing**: bcrypt
+- **Validation**: Zod 4
+- **Rate Limiting**: Custom in-memory implementation
+
+### DevOps
+- **Containerization**: Docker
+- **Orchestration**: Docker Compose
+- **Process Management**: Node.js
+
+## 🚀 Deployment
+
+### Environment Variables
+
+Required environment variables:
+
+```env
+DATABASE_URL="mysql://root:password@localhost:3306/hirehub"
+JWT_SECRET="your-secret-key-here"
+```
+
+### Production Checklist
+
+- [ ] Set strong JWT_SECRET
+- [ ] Use environment-specific DATABASE_URL
+- [ ] Enable HTTPS
+- [ ] Configure CORS for production domains
+- [ ] Set up database backups
+- [ ] Configure monitoring and logging
+- [ ] Review rate limiting settings
+- [ ] Enable security headers
+- [ ] Set up error tracking (e.g., Sentry)
+
+## 📝 Development
+
+### Code Linting
+```bash
+npm run lint
+```
+
+### Database Migrations
+```bash
+# Create migration
+npx prisma migrate dev --name migration_name
+
+# Reset database (development only)
+npx prisma migrate reset
+
+# Generate Prisma client
+npx prisma generate
+```
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 📘 Final Defense (Mongolian)
+
+For requirement-by-requirement mapping, architecture rationale, trade-offs, and defense talking points, see:
+
+- `docs/hirehub-final-defense-mn.md`
+
+## 🆕 Newly Added Modules
+
+### CV Management
+- `GET /api/cv` - list current user CVs
+- `POST /api/cv` - create CV
+- `PUT /api/cv/:id` - update CV
+- `DELETE /api/cv/:id` - delete CV
+
+### Interview Scheduling
+- `GET /api/interviews` - list interviews with RBAC visibility
+- `POST /api/interviews` - schedule interview for an application
+- `PUT /api/interviews/:id` - update interview
+- `DELETE /api/interviews/:id` - delete interview
+
+### API Documentation
+- OpenAPI endpoint: `GET /api/openapi`
+- Swagger UI page: `GET /api-docs`

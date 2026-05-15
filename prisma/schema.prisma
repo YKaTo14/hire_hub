@@ -1,0 +1,243 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int           @id @default(autoincrement())
+  name          String?
+  email         String        @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  role          Role          @default(USER)
+  bio           String?       @db.Text
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  accounts      Account[]
+  sessions      Session[]
+  
+  jobs          Job[]
+  applications  Application[]
+  cvs           CV[]
+  sentMessages  Message[]     @relation("Sender")
+  receivedMessages Message[]  @relation("Receiver")
+  interviews    Interview[]   @relation("Interviewer")
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             Int
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       Int
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  isRead    Boolean  @default(false)
+
+  senderId   Int
+  receiverId Int
+  jobId      Int?
+
+  sender   User @relation("Sender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("Receiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([createdAt])
+}
+
+model Job {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String   @db.Text
+  salary      Int
+  location    String?
+  category    JobCategory? 
+  customCategory String?
+  type        JobType  @default(FULL_TIME)
+  status      JobStatus @default(ACTIVE)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  employerId  Int
+  employer    User     @relation(fields: [employerId], references: [id], onDelete: Cascade)
+
+  applications Application[]
+
+  @@index([employerId])
+  @@index([status])
+  @@index([type])
+}
+
+model Application {
+  id          Int             @id @default(autoincrement())
+  status      ApplicationStatus @default(PENDING)
+  coverLetter String?       @db.Text
+  cvUrl       String?       @db.Text
+  cvName      String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  userId Int
+  jobId  Int
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  interviews Interview[]
+  aiScores AIMatchScore[]
+
+  @@unique([userId, jobId])
+  @@index([userId])
+  @@index([jobId])
+  @@index([status])
+}
+
+model CV {
+  id         Int      @id @default(autoincrement())
+  title      String
+  summary    String?  @db.Text
+  skills     String?  @db.Text
+  experience String?  @db.Text
+  education  String?  @db.Text
+  fileUrl    String?
+  isPrimary  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isPrimary])
+}
+
+model Interview {
+  id             Int             @id @default(autoincrement())
+  scheduledAt    DateTime
+  durationMinute Int             @default(60)
+  mode           InterviewMode   @default(ONLINE)
+  location       String?
+  meetingLink    String?
+  notes          String?         @db.Text
+  status         InterviewStatus @default(SCHEDULED)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  applicationId Int
+  interviewerId Int
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  interviewer User        @relation("Interviewer", fields: [interviewerId], references: [id], onDelete: Restrict)
+
+  @@index([applicationId])
+  @@index([interviewerId])
+  @@index([scheduledAt])
+  @@index([status])
+}
+
+model AIMatchScore {
+  id               Int      @id @default(autoincrement())
+  score            Int
+  matchedSkills    String?  @db.Text
+  missingSkills    String?  @db.Text
+  reasoning        String?  @db.Text
+  modelVersion     String?
+  createdAt        DateTime @default(now())
+
+  applicationId Int
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@index([score])
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+  EMPLOYER
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERNSHIP
+  REMOTE
+}
+
+enum JobCategory {
+  ENGINEERING
+  MARKETING
+  SALES
+  DESIGN
+  FINANCE
+  HR
+  OPERATIONS
+  PRODUCT
+  CUSTOMER_SUPPORT
+  OTHER
+}
+
+enum JobStatus {
+  ACTIVE
+  CLOSED
+  DRAFT
+}
+
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  UNDER_REVIEW
+}
+
+enum InterviewStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+  RESCHEDULED
+}
+
+enum InterviewMode {
+  ONLINE
+  ONSITE
+  PHONE
+}
