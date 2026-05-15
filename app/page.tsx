@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Search, MapPin, Sparkles, Briefcase, TrendingUp, Database, PenTool, BarChart2, Rocket } from "lucide-react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 
 const categories = [
   { name: "Инженерчлэл", jobs: 3, icon: Briefcase },
@@ -14,69 +13,6 @@ const categories = [
   { name: "Дизайн", jobs: 1, icon: PenTool },
   { name: "Маркетинг", jobs: 1, icon: BarChart2 },
   { name: "Бүтээгдэхүүн", jobs: 1, icon: Rocket },
-];
-
-const featuredJobs = [
-  {
-    id: 1,
-    title: "Senior Full-Stack Developer",
-    company: "TechCorp Mongolia",
-    logo: "TE",
-    type: "full-time",
-    location: "Ulaanbaatar, Mongolia",
-    salary: "$3000k - 6000k",
-    description: "We are looking for a senior full-stack developer with expertise in React and Node.js to join our growing..."
-  },
-  {
-    id: 2,
-    title: "UI/UX Designer",
-    company: "TechCorp Mongolia",
-    logo: "TE",
-    type: "full-time",
-    location: "Ulaanbaatar, Mongolia",
-    salary: "$2000k - 4000k",
-    description: "Creative UI/UX designer to design beautiful and intuitive interfaces for our enterprise software..."
-  },
-  {
-    id: 3,
-    title: "DevOps Engineer",
-    company: "TechCorp Mongolia",
-    logo: "TE",
-    type: "remote",
-    location: "Remote",
-    salary: "$4000k - 7000k",
-    description: "Looking for an experienced DevOps engineer to manage our cloud infrastructure and CI/CD..."
-  },
-  {
-    id: 4,
-    title: "Business Analyst",
-    company: "Innovate Solutions",
-    logo: "IN",
-    type: "full-time",
-    location: "Ulaanbaatar, Mongolia",
-    salary: "$2500k - 4500k",
-    description: "Analyze business requirements, work with stakeholders and create detailed specifications for..."
-  },
-  {
-    id: 5,
-    title: "Marketing Manager",
-    company: "Innovate Solutions",
-    logo: "IN",
-    type: "full-time",
-    location: "Ulaanbaatar, Mongolia",
-    salary: "$2000k - 3500k",
-    description: "Lead our digital marketing strategy across all channels. Manage campaigns, analyze data and..."
-  },
-  {
-    id: 6,
-    title: "Junior React Developer",
-    company: "TechCorp Mongolia",
-    logo: "TE",
-    type: "full-time",
-    location: "Ulaanbaatar, Mongolia",
-    salary: "$1200k - 2000k",
-    description: "Excellent opportunity for a junior developer to join our team and grow with mentorship from senior..."
-  }
 ];
 
 export default function Home() {

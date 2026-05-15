@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { AIChatBot } from "@/components/AIChatBot";
 import { Providers } from "./providers";
+import { LazyAIChatBot } from "@/components/LazyAIChatBot";
 
 export const metadata: Metadata = {
   title: "HireHub - Where Ambition Meets Opportunity",
@@ -21,7 +21,7 @@ export default function RootLayout({
         <Providers>
           <Navbar />
           <main className="flex-1">{children}</main>
-          <AIChatBot />
+          <LazyAIChatBot />
           <Footer />
         </Providers>
       </body>
