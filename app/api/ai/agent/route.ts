@@ -1,14 +1,19 @@
-import { PrismaClient } from '@prisma/client';
 import Groq from "groq-sdk";
 
-const prisma = new PrismaClient();
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+function getGroqClient() {
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) {
+    throw new Error("GROQ_API_KEY is required");
+  }
+
+  return new Groq({ apiKey });
+}
 
 export async function POST(req: Request) {
   try {
     const { message, userId } = await req.json();
 
-    const completion = await groq.chat.completions.create({
+    const completion = await getGroqClient().chat.completions.create({
       messages: [
         {
           role: "system",

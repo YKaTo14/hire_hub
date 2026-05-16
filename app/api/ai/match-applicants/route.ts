@@ -3,7 +3,15 @@ import { requireAuth } from '@/lib/auth';
 import Groq from "groq-sdk";
 
 const prisma = new PrismaClient();
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+
+function getGroqClient() {
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) {
+    throw new Error("GROQ_API_KEY is required");
+  }
+
+  return new Groq({ apiKey });
+}
 
 export async function POST(req: Request) {
   try {
@@ -36,7 +44,7 @@ export async function POST(req: Request) {
       return Response.json({ error: 'Ажлын байр олдсонгүй' }, { status: 404 });
     }
 
-    const applicants = job.applications.map(app => ({
+    const applicants = job.applications.map((app: any) => ({
       id: app.id,
       name: app.user.name,
       bio: app.user.bio || "Мэдээлэл байхгүй",
@@ -57,7 +65,7 @@ export async function POST(req: Request) {
       Хариултыг Монгол хэлээр өгнө үү.
     `;
 
-    const completion = await groq.chat.completions.create({
+    const completion = await getGroqClient().chat.completions.create({
       messages: [
         {
           role: "user",

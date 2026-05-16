@@ -2,7 +2,15 @@ import { PrismaClient } from '@prisma/client';
 import Groq from "groq-sdk";
 
 const prisma = new PrismaClient();
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+
+function getGroqClient() {
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) {
+    throw new Error("GROQ_API_KEY is required");
+  }
+
+  return new Groq({ apiKey });
+}
 
 export async function POST(req: Request) {
   try {
@@ -28,7 +36,7 @@ export async function POST(req: Request) {
       - Хүсэж буй байршил: ${location}
       
       Ажлын байрууд:
-      ${JSON.stringify(jobs.map(j => ({ id: j.id, title: j.title, description: j.description, location: j.location, salary: j.salary, employer: j.employer.name })), null, 2)}
+      ${JSON.stringify(jobs.map((j: any) => ({ id: j.id, title: j.title, description: j.description, location: j.location, salary: j.salary, employer: j.employer.name })), null, 2)}
       
       Хариултыг JSON форматаар дараах хэлбэртэй өгнө үү:
       {
@@ -43,7 +51,7 @@ export async function POST(req: Request) {
       Зөвхөн JSON-ийг буцаана уу, өөр текст битгий бичээрэй.
     `;
 
-    const completion = await groq.chat.completions.create({
+    const completion = await getGroqClient().chat.completions.create({
       messages: [{ role: "user", content: prompt }],
       model: "llama-3.3-70b-versatile",
       response_format: { type: "json_object" }
@@ -54,7 +62,7 @@ export async function POST(req: Request) {
 
     // Map result back to include full job objects
     const matches = result.matches.map((match: any) => ({
-      job: jobs.find(j => j.id === match.jobId),
+      job: jobs.find((j: any) => j.id === match.jobId),
       score: match.score,
       explanation: match.explanation
     })).filter((m: any) => m.job);
