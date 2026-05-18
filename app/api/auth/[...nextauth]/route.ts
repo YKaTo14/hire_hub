@@ -2,10 +2,10 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
+import { getPrisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
+const prisma = getPrisma();
 
 export const authOptions = {
   adapter: PrismaAdapter(prisma),
@@ -57,11 +57,11 @@ export const authOptions = {
       }
       return token;
     },
-    async session({ session, token }: any) {
-      if (session?.user && token) {
-        session.user.id = token.id;
-        session.user.role = token.role || "USER";
-        session.user.email = token.email || session.user.email;
+    async session({ session, token, user }: any) {
+      if (session?.user) {
+        session.user.id = token?.id || user?.id?.toString?.() || user?.id || session.user.email;
+        session.user.role = token?.role || user?.role || "USER";
+        session.user.email = token?.email || user?.email || session.user.email;
       }
       return session;
     }

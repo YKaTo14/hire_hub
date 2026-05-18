@@ -51,12 +51,16 @@ npm run dev
 ## For Production
 When deploying to production, update the URLs:
 ```env
-NEXTAUTH_URL=https://yourdomain.com
+NEXTAUTH_URL=https://hire-hub-two-henna.vercel.app
 GOOGLE_CLIENT_ID=production-client-id
 GOOGLE_CLIENT_SECRET=production-client-secret
 ```
 
-And add `https://yourdomain.com/api/auth/callback/google` to Google OAuth settings.
+And add this exact URL to Google OAuth settings:
+
+```text
+https://hire-hub-two-henna.vercel.app/api/auth/callback/google
+```
 
 ## Features
 - ✅ Sign up with Google
@@ -66,6 +70,6 @@ And add `https://yourdomain.com/api/auth/callback/google` to Google OAuth settin
 - ✅ Works alongside traditional auth
 
 ## Troubleshooting
-- **"redirect_uri_mismatch"**: Check URLs match in Google OAuth settings
+- **"redirect_uri_mismatch"**: Google Cloud Console дээрх Authorized redirect URI нь `https://hire-hub-two-henna.vercel.app/api/auth/callback/google`-тай яг ижил байх ёстой. `http`, trailing slash, preview deployment URL, өөр Vercel domain зөрвөл энэ алдаа гарна.
 - **"invalid_client"**: Verify Client ID/Secret are correct in .env
 - **Port mismatch**: If using different port, update both .env and Google OAuth settings

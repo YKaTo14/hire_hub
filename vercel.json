@@ -1,0 +1,5 @@
+{
+  "env": {
+    "NEXTAUTH_URL": "https://hire-hub-two-henna.vercel.app"
+  }
+}
